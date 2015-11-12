@@ -13,10 +13,10 @@ public class SoundActivity extends AppCompatActivity
     private Button startButton;
     private Button stopButton;
     private Button pauseButton;
-    private Button videoBoutton;
-    private seekBar soundSeekBar;
-    private thread soundThread;
-
+    private Button videoButton;
+    private SeekBar soundSeekBar;
+    private Thread soundThread;
+    private MediaPlayer soundPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -28,18 +28,19 @@ public class SoundActivity extends AppCompatActivity
         pauseButton = (Button) findViewById(R.id.pauseButton);
         stopButton = (Button) findViewById(R.id.stopButton);
         soundSeekBar = (SeekBar) findViewById(R.id.seekBar);
-        videoBoutton = (Button) findViewById(R.id.videoButton);
-        soundPlayer = MideaPlayer.create(this.getBaseContext(), R.raw.lovelikeyou);
+        videoButton = (Button) findViewById(R.id.videoButton);
+        soundPlayer = MediaPlayer.create(this.getBaseContext(), R.raw.lovelikeyou);
 
         setupListeners();
 
-        soundThread = new Thread(this);
+        soundThread = new Thread(soundThread);
         soundThread.start();
 
     }
+
     private void setupListeners()
     {
-        startButton.setOnClickListener(new View.OnClickListener();
+        startButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
@@ -48,8 +49,62 @@ public class SoundActivity extends AppCompatActivity
             }
         });
 
-        pauseButton.setOnClickListener();
+        pauseButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View currentView)
+            {
+                soundPlayer.pause();
+            }
+        });
 
+        stopButton.setOnClickListener(new View.OnClickListener()
 
+        {
+            @Override
+            public void onClick(View currentView)
+            {
+                soundPlayer.stop();
+                soundPlayer = MediaPlayer.create(getBaseContext(), R.raw.lovelikeyou);
+            }
+
+        });
+
+        videoButton.setOnClickListener(new View.OnClickListener()
+
+        {
+            @Override
+            public void onClick(View currentView)
+            {
+                Intent myIntent = new Intent(currentView.getContext(), SoundActivity.class);
+
+                startActivityForResult(myIntent, 0);
+            }
+        });
+
+        soundSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+        {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar)
+            {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar)
+            {}
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+            {
+                if (fromUser)
+                {
+                    soundPlayer.seekTo(progress);
+                }
+            }
+
+        });
     }
 }
+
+
